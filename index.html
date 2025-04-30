@@ -8,7 +8,6 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            /* กำหนดรูปภาพเริ่มต้น */
             background: url('123.jpg') no-repeat center center fixed;
             background-size: cover;
             color: black;
@@ -104,8 +103,6 @@
             opacity: 1;
             top: 20px;
         }
-
-        /* สไตล์สำหรับตำแหน่งของ input file */
         #imageInput {
             position: absolute;
             top: 20px;
@@ -118,12 +115,12 @@
 
     <h1>โปรแกรมวินเลขจากหน้าไปหลัง</h1>
     <p>ป้อนเลขที่ต้องการวิน อย่างน้อย 3 ตัว</p>
-    <input type="text" id="numberInput" placeholder="กรอกตัวเลข" autocomplete="off" onkeypress="handleEnter(event)">
+    <input type="text" id="numberInput" placeholder="กรอกตัวเลข" autocomplete="off" 
+           onkeypress="handleEnter(event)" oninput="filterInput()">
     <br>
     <input type="checkbox" id="noDouble"> <label for="noDouble" class="red-text">ไม่รวมเบิ้ล</label>
     <br>
-    
-    <!-- Input สำหรับเลือกไฟล์รูปภาพอยู่ที่มุมขวาบน -->
+
     <input type="file" id="imageInput" onchange="changeBackground(event)">
     <br>
 
@@ -131,12 +128,11 @@
         <button class="green" onclick="generateWinNumbers()">วินเลข</button>
         <button class="red" onclick="resetPage()">เริ่มใหม่</button>
     </div>
-    
+
     <div class="container">
         <div id="results"></div>
     </div>
 
-    <!-- Toast Message -->
     <div id="toast">คัดลอกสำเร็จ!</div>
 
     <script>
@@ -149,7 +145,7 @@
         function generateWinNumbers() {
             const input = document.getElementById("numberInput").value;
             const noDouble = document.getElementById("noDouble").checked;
-            const digits = [...new Set(input.split('').sort())]; // ลบตัวซ้ำและเรียงลำดับ
+            const digits = [...new Set(input.split('').sort())];
             let results = "";
 
             if (digits.length < 2) {
@@ -160,7 +156,6 @@
             if (noDouble) {
                 const threeDigit = getCombinations(digits, 3);
                 const twoDigit = getCombinations(digits, 2);
-
                 results += createResultBox("เลข 3 ตัว ไม่รวมเบิ้ล", splitResultIntoLines(threeDigit, 15), "red-text");
                 results += createResultBox("เลข 2 ตัว ไม่รวมเบิ้ล", splitResultIntoLines(twoDigit, 15), "blue-text");
             } else {
@@ -245,6 +240,17 @@
                     document.body.style.backgroundImage = `url(${e.target.result})`;
                 };
                 reader.readAsDataURL(file);
+            }
+        }
+
+        // ✅ เพิ่มฟังก์ชันป้องกันตัวอักษร/สัญลักษณ์
+        function filterInput() {
+            const inputField = document.getElementById("numberInput");
+            const original = inputField.value;
+            const cleaned = original.replace(/[^0-9]/g, '');
+            if (original !== cleaned) {
+                inputField.value = cleaned;
+                showToast("กรอกได้เฉพาะตัวเลขเท่านั้น");
             }
         }
     </script>
